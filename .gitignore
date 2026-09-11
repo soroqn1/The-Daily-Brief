@@ -1,0 +1,25 @@
+# Python
+!__init__.py
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+.uv/
+dist/
+build/
+*.egg-info/
+
+# Environment & secrets
+.env
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Output data (lives in ~/.the-daily-brief/, but just in case)
+output/
+
+# Agent context (local machine only)
+.agent/

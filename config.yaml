@@ -1,0 +1,21 @@
+output_dir: ~/.the-daily-brief        # where briefs & state are stored
+brief_after_hour: 9               # don't generate before this hour
+brief_language: en
+
+llm:
+  provider: gemini                 # gemini | openai
+  model: gemini-2.0-flash
+
+connectors:
+  gmail:
+    enabled: true
+    max_emails: 20
+    scan_hours: 12                 # look back 12h
+
+  obsidian:
+    enabled: true
+    vault_path: ~/me/obsidian
+    scan_dirs: ["50 Daily", "10 Projects"]
+
+  calendar:
+    enabled: false                 # phase 2
