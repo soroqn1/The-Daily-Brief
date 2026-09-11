@@ -11,17 +11,12 @@ from the_daily_brief.connectors.gmail import GmailConnector
 
 
 @pytest.mark.asyncio
-async def test_gmail_returns_empty_when_credentials_missing(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
+async def test_gmail_returns_empty_when_credentials_missing() -> None:
     """Test that GmailConnector returns [] without error when credentials are not set."""
-    monkeypatch.delenv("GMAIL_CLIENT_ID", raising=False)
-    monkeypatch.delenv("GMAIL_CLIENT_SECRET", raising=False)
-    monkeypatch.delenv("GMAIL_REFRESH_TOKEN", raising=False)
-
-    connector = GmailConnector()
-    items = await connector.fetch()
-    assert items == []
+    with patch.object(GmailConnector, "_resolve_credentials", return_value=None):
+        connector = GmailConnector()
+        items = await connector.fetch()
+        assert items == []
 
 
 @pytest.mark.asyncio

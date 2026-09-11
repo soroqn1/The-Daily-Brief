@@ -153,7 +153,6 @@ class GmailConnector(BaseConnector):
             scan_hours = int(gmail_cfg.get("scan_hours", 12))
             since_time = datetime.now(UTC) - timedelta(hours=scan_hours)
             after_epoch = int(since_time.timestamp())
-            query = f"(is:unread OR is:starred) after:{after_epoch}"
 
             async with httpx.AsyncClient(timeout=15.0) as client:
                 access_token = await self._get_access_token(
@@ -162,31 +161,35 @@ class GmailConnector(BaseConnector):
                 if not access_token:
                     return []
 
-                params = {
-                    "q": query,
-                    "maxResults": min(max_emails, 100),
-                }
-                headers = {"Authorization": f"Bearer {access_token}"}
-                response = await client.get(
+                # Fetch starred items (always) and recent unread items in parallel
+                starred_req = client.get(
                     GMAIL_MESSAGES_ENDPOINT,
-                    headers=headers,
-                    params=params,
+                    headers={"Authorization": f"Bearer {access_token}"},
+                    params={"q": "is:starred", "maxResults": max_emails},
+                )
+                unread_req = client.get(
+                    GMAIL_MESSAGES_ENDPOINT,
+                    headers={"Authorization": f"Bearer {access_token}"},
+                    params={
+                        "q": f"is:unread after:{after_epoch}",
+                        "maxResults": max_emails,
+                    },
                 )
 
-                if response.status_code != 200:
-                    logger.warning(
-                        "Gmail search query failed with status %d: %s",
-                        response.status_code,
-                        response.text,
-                    )
-                    return []
+                resp_starred, resp_unread = await asyncio.gather(starred_req, unread_req)
 
-                data = response.json()
-                messages = data.get("messages", [])
-                if not messages:
-                    return []
+                message_ids: list[str] = []
+                seen_ids: set[str] = set()
 
-                message_ids = [m["id"] for m in messages if isinstance(m, dict) and "id" in m]
+                for resp in (resp_starred, resp_unread):
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        for m in data.get("messages", []):
+                            msg_id = m.get("id")
+                            if msg_id and msg_id not in seen_ids:
+                                seen_ids.add(msg_id)
+                                message_ids.append(msg_id)
+
                 tasks = [
                     self._fetch_message_detail(client, msg_id, access_token)
                     for msg_id in message_ids[:max_emails]
