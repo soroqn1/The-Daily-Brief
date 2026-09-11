@@ -10,6 +10,9 @@ dependencies = [
     "pyyaml>=6.0.0",
 ]
 
+[project.scripts]
+daily-brief = "the_daily_brief.main:main"
+
 [dependency-groups]
 dev = [
     "pytest>=8.0.0",

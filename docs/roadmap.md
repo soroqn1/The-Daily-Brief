@@ -17,7 +17,7 @@
 - [x] `renderer/templates/brief.html.j2` — newspaper-style light theme
 - [x] `notifier.py` — macOS notifications via `osascript`
 - [x] `main.py` — async orchestrator: gather → LLM → render → open → cleanup
-- [ ] `trigger/com.dailybrief.plist` — launchd LaunchAgent (wake-from-sleep)
+- [x] `trigger/com.dailybrief.plist` — launchd LaunchAgent (wake-from-sleep)
 - [x] Error handling: connector failure → skip + warn in brief; LLM failure → macOS alert
 
 ---

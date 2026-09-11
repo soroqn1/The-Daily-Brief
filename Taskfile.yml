@@ -23,3 +23,20 @@ tasks:
     cmds:
       - task: ruff
       - task: test
+
+  install-agent:
+    desc: Install and load macOS launchd agent
+    cmds:
+      - mkdir -p ~/Library/LaunchAgents ~/.the-daily-brief/logs
+      - cp trigger/com.dailybrief.plist ~/Library/LaunchAgents/com.dailybrief.plist
+      - launchctl unload ~/Library/LaunchAgents/com.dailybrief.plist 2>/dev/null || true
+      - launchctl load ~/Library/LaunchAgents/com.dailybrief.plist
+      - echo "LaunchAgent loaded successfully."
+
+  uninstall-agent:
+    desc: Unload and remove macOS launchd agent
+    cmds:
+      - launchctl unload ~/Library/LaunchAgents/com.dailybrief.plist 2>/dev/null || true
+      - rm -f ~/Library/LaunchAgents/com.dailybrief.plist
+      - echo "LaunchAgent uninstalled."
+
