@@ -6,6 +6,11 @@ tasks:
     cmds:
       - uv run python -m the_daily_brief.main --force
 
+  auth-gmail:
+    desc: Authorize Gmail via browser and save refresh token to .env
+    cmds:
+      - uv run python -m the_daily_brief.auth
+
   ruff:
     desc: Run ruff linter and format check
     cmds:
