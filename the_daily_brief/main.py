@@ -74,22 +74,23 @@ def cleanup_old_briefs(briefs_dir: Path, keep_days: int = 7) -> int:
     return deleted_count
 
 
-async def run(open_browser: bool = True) -> Path | None:
+async def run(open_browser: bool = True, force: bool = False) -> Path | None:
     """Run the daily brief pipeline."""
     config = get_config()
     config.ensure_directories()
     state = load_state(config.state_file)
 
-    if state.brief_generated_today:
-        logger.info("Brief already generated today. Exiting.")
-        return None
+    if not force:
+        if state.brief_generated_today:
+            logger.info("Brief already generated today. Exiting.")
+            return None
 
-    if too_early(config.brief_after_hour):
-        logger.info(
-            "Current time is before %02d:00 cutoff. Exiting.",
-            config.brief_after_hour,
-        )
-        return None
+        if too_early(config.brief_after_hour):
+            logger.info(
+                "Current time is before %02d:00 cutoff. Exiting.",
+                config.brief_after_hour,
+            )
+            return None
 
     logger.info("Starting The Daily Brief generation...")
 
@@ -143,11 +144,14 @@ async def run(open_browser: bool = True) -> Path | None:
 
 def main() -> None:
     """Main execution entry point."""
+    import sys
+
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
-    asyncio.run(run())
+    force = "--force" in sys.argv or "-f" in sys.argv
+    asyncio.run(run(force=force))
 
 
 if __name__ == "__main__":

@@ -1,6 +1,11 @@
 version: '3'
 
 tasks:
+  brief-now:
+    desc: Force generate and display today's brief immediately in browser
+    cmds:
+      - uv run python -m the_daily_brief.main --force
+
   ruff:
     desc: Run ruff linter and format check
     cmds:

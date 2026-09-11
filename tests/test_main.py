@@ -92,6 +92,29 @@ async def test_run_skips_when_too_early(tmp_path: Path) -> None:
 
 
 @pytest.mark.asyncio
+async def test_run_force_bypasses_cutoff(tmp_path: Path) -> None:
+    """Test that force=True bypasses early hour and idempotency."""
+    dummy_config = Config(output_dir=tmp_path)
+    state_file = tmp_path / "state.json"
+    dummy_config.ensure_directories()
+    mock_state = State(last_brief_date=date.today().isoformat(), _path=state_file)
+
+    mock_llm = AsyncMock()
+    mock_llm.generate.return_value = BriefData(headline="Forced Brief")
+
+    with (
+        patch("the_daily_brief.main.get_config", return_value=dummy_config),
+        patch("the_daily_brief.main.load_state", return_value=mock_state),
+        patch("the_daily_brief.main.too_early", return_value=True),
+        patch("the_daily_brief.main.get_active_connectors", return_value=[]),
+        patch("the_daily_brief.main.get_llm_client", return_value=mock_llm),
+    ):
+        result = await run(open_browser=False, force=True)
+        assert result is not None
+        assert "Forced Brief" in result.read_text(encoding="utf-8")
+
+
+@pytest.mark.asyncio
 async def test_run_llm_failure_triggers_notification(tmp_path: Path) -> None:
     """Test that LLM API failure triggers macOS notification and exits."""
     dummy_config = Config(output_dir=tmp_path, brief_after_hour=8)
