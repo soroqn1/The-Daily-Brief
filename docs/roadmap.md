@@ -10,9 +10,9 @@
 - [x] `BaseConnector` ABC — `fetch() -> list[BriefItem]`
 - [x] `connectors/gmail.py` — unread & flagged emails via Gmail API (OAuth)
 - [x] `connectors/obsidian.py` — open TODOs, incomplete tasks from vault markdown
-- [ ] `BaseLLMClient` ABC — unified interface for LLM providers
-- [ ] `llm/gemini.py` — Gemini API client
-- [ ] `llm/openai.py` — OpenAI GPT-4o client
+- [x] `BaseLLMClient` ABC — unified interface for LLM providers
+- [x] `llm/gemini.py` — Gemini API client
+- [x] `llm/openai.py` — OpenAI GPT-4o client
 - [ ] `renderer/renderer.py` — `BriefData` (JSON) → HTML via Jinja2
 - [ ] `renderer/templates/brief.html.j2` — newspaper-style light theme
 - [ ] `notifier.py` — macOS notifications via `osascript`

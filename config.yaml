@@ -4,7 +4,7 @@ brief_language: en
 
 llm:
   provider: gemini                 # gemini | openai
-  model: gemini-2.0-flash
+  model: gemini-3-flash-preview
 
 connectors:
   gmail:
