@@ -15,10 +15,10 @@
 - [x] `llm/openai.py` — OpenAI GPT-4o client
 - [x] `renderer/renderer.py` — `BriefData` (JSON) → HTML via Jinja2
 - [x] `renderer/templates/brief.html.j2` — newspaper-style light theme
-- [ ] `notifier.py` — macOS notifications via `osascript`
-- [ ] `main.py` — async orchestrator: gather → LLM → render → open → cleanup
+- [x] `notifier.py` — macOS notifications via `osascript`
+- [x] `main.py` — async orchestrator: gather → LLM → render → open → cleanup
 - [ ] `trigger/com.dailybrief.plist` — launchd LaunchAgent (wake-from-sleep)
-- [ ] Error handling: connector failure → skip + warn in brief; LLM failure → macOS alert
+- [x] Error handling: connector failure → skip + warn in brief; LLM failure → macOS alert
 
 ---
 
