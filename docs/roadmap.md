@@ -4,12 +4,12 @@
 
 > Goal: wake up, open laptop, brief appears in browser.
 
-- [ ] Project scaffold (`uv`, `pyproject.toml`, `Taskfile.yml`)
-- [ ] `config.yaml` + `.env` loading (`config.py`)
-- [ ] `state.py` — track last brief date, enforce 09:00 cutoff
-- [ ] `BaseConnector` ABC — `fetch() -> list[BriefItem]`
-- [ ] `connectors/gmail.py` — unread & flagged emails via Gmail API (OAuth)
-- [ ] `connectors/obsidian.py` — open TODOs, incomplete tasks from vault markdown
+- [x] Project scaffold (`uv`, `pyproject.toml`, `Taskfile.yml`)
+- [x] `config.yaml` + `.env` loading (`config.py`)
+- [x] `state.py` — track last brief date, enforce 09:00 cutoff
+- [x] `BaseConnector` ABC — `fetch() -> list[BriefItem]`
+- [x] `connectors/gmail.py` — unread & flagged emails via Gmail API (OAuth)
+- [x] `connectors/obsidian.py` — open TODOs, incomplete tasks from vault markdown
 - [ ] `BaseLLMClient` ABC — unified interface for LLM providers
 - [ ] `llm/gemini.py` — Gemini API client
 - [ ] `llm/openai.py` — OpenAI GPT-4o client
