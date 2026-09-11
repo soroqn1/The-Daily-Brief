@@ -13,8 +13,8 @@
 - [x] `BaseLLMClient` ABC — unified interface for LLM providers
 - [x] `llm/gemini.py` — Gemini API client
 - [x] `llm/openai.py` — OpenAI GPT-4o client
-- [ ] `renderer/renderer.py` — `BriefData` (JSON) → HTML via Jinja2
-- [ ] `renderer/templates/brief.html.j2` — newspaper-style light theme
+- [x] `renderer/renderer.py` — `BriefData` (JSON) → HTML via Jinja2
+- [x] `renderer/templates/brief.html.j2` — newspaper-style light theme
 - [ ] `notifier.py` — macOS notifications via `osascript`
 - [ ] `main.py` — async orchestrator: gather → LLM → render → open → cleanup
 - [ ] `trigger/com.dailybrief.plist` — launchd LaunchAgent (wake-from-sleep)

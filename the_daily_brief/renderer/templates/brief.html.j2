@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Daily Brief — {{ date_str }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #ffffff;
+      color: #111111;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.5;
+      padding: 32px 20px;
+    }
+
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    /* Masthead */
+    .masthead {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .masthead-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #111111;
+      color: #333333;
+    }
+
+    .masthead-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(40px, 6vw, 68px);
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+      padding: 10px 0;
+      line-height: 1.05;
+    }
+
+    .masthead-subline {
+      border-top: 3px double #111111;
+      border-bottom: 1px solid #111111;
+      padding: 6px 0;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Lead Story */
+    .lead-story {
+      padding: 24px 0 20px;
+      border-bottom: 1px solid #111111;
+      margin-bottom: 24px;
+    }
+
+    .lead-headline {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(26px, 3.5vw, 38px);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .recommendation-box {
+      border: 1px solid #111111;
+      padding: 16px 20px;
+      background: #fafafa;
+    }
+
+    .recommendation-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 6px;
+      color: #111111;
+    }
+
+    .recommendation-text {
+      font-size: 15px;
+      font-style: italic;
+      color: #222222;
+      line-height: 1.5;
+    }
+
+    /* Columns Grid */
+    .sections-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+    }
+
+    .section-column {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .column-header {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 20px;
+      font-weight: 700;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #111111;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .column-count {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: #666666;
+    }
+
+    .item-list {
+      list-style: none;
+    }
+
+    .item-card {
+      padding: 12px 0;
+      border-bottom: 1px solid #eaeaea;
+    }
+
+    .item-card:last-child {
+      border-bottom: none;
+    }
+
+    .item-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .urgent-badge {
+      background-color: #c92a2a;
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      letter-spacing: 0.8px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .item-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111111;
+      line-height: 1.4;
+    }
+
+    .item-title a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px dotted #111111;
+    }
+
+    .item-title a:hover {
+      border-bottom-style: solid;
+    }
+
+    .item-summary {
+      font-size: 13px;
+      color: #444444;
+      line-height: 1.45;
+      margin-top: 4px;
+    }
+
+    .item-meta {
+      font-size: 11px;
+      color: #777777;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 6px;
+    }
+
+    .empty-state {
+      font-size: 13px;
+      font-style: italic;
+      color: #777777;
+      padding: 12px 0;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 40px;
+      padding-top: 16px;
+      border-top: 1px solid #111111;
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #555555;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="masthead">
+      <div class="masthead-meta">
+        <span>macOS Automated Wake Intelligence</span>
+        <span>{{ date_str }}</span>
+        <span>Local Edition</span>
+      </div>
+      <h1 class="masthead-title">The Daily Brief</h1>
+      <div class="masthead-subline">
+        <span>Curated Daily by LLM</span>
+        <span>Issue: {{ issue_number }}</span>
+        <span>Weather: Clear • Focus Day</span>
+      </div>
+    </header>
+
+    {% if brief.headline %}
+    <section class="lead-story">
+      <h2 class="lead-headline">{{ brief.headline }}</h2>
+      {% if brief.ai_recommendation %}
+      <div class="recommendation-box">
+        <div class="recommendation-label">Editor's Recommendation</div>
+        <div class="recommendation-text">{{ brief.ai_recommendation }}</div>
+      </div>
+      {% endif %}
+    </section>
+    {% endif %}
+
+    <main class="sections-grid">
+      <!-- Action Required Column -->
+      <section class="section-column">
+        <div class="column-header">
+          <span>Action Required</span>
+          <span class="column-count">{{ brief.action_required | length }}</span>
+        </div>
+        {% if brief.action_required %}
+        <ul class="item-list">
+          {% for item in brief.action_required %}
+          <li class="item-card">
+            <div class="item-header">
+              <span class="urgent-badge">Urgent</span>
+              <div class="item-title">
+                {% if item.url %}
+                <a href="{{ item.url }}">{{ item.title }}</a>
+                {% else %}
+                {{ item.title }}
+                {% endif %}
+              </div>
+            </div>
+            {% if item.summary %}
+            <p class="item-summary">{{ item.summary }}</p>
+            {% endif %}
+            {% if item.source %}
+            <div class="item-meta">Source: {{ item.source }}</div>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="empty-state">No urgent items requiring immediate action.</p>
+        {% endif %}
+      </section>
+
+      <!-- Tasks Column (Obsidian) -->
+      <section class="section-column">
+        <div class="column-header">
+          <span>Tasks & Goals</span>
+          <span class="column-count">{{ brief.tasks | length }}</span>
+        </div>
+        {% if brief.tasks %}
+        <ul class="item-list">
+          {% for task in brief.tasks %}
+          <li class="item-card">
+            <div class="item-header">
+              <div class="item-title">
+                {% if task.url %}
+                <a href="{{ task.url }}">&#9634; {{ task.title }}</a>
+                {% else %}
+                &#9634; {{ task.title }}
+                {% endif %}
+              </div>
+            </div>
+            {% if task.summary %}
+            <p class="item-summary">{{ task.summary }}</p>
+            {% endif %}
+            {% if task.source %}
+            <div class="item-meta">Source: {{ task.source }}</div>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="empty-state">No open tasks recorded for today.</p>
+        {% endif %}
+      </section>
+
+      <!-- Missed & Incoming (Gmail) -->
+      <section class="section-column">
+        <div class="column-header">
+          <span>Incoming & Missed</span>
+          <span class="column-count">{{ brief.missed | length }}</span>
+        </div>
+        {% if brief.missed %}
+        <ul class="item-list">
+          {% for item in brief.missed %}
+          <li class="item-card">
+            <div class="item-header">
+              <div class="item-title">
+                {% if item.url %}
+                <a href="{{ item.url }}">{{ item.title }}</a>
+                {% else %}
+                {{ item.title }}
+                {% endif %}
+              </div>
+            </div>
+            {% if item.summary %}
+            <p class="item-summary">{{ item.summary }}</p>
+            {% endif %}
+            {% if item.source %}
+            <div class="item-meta">Source: {{ item.source }}</div>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="empty-state">No unread or incoming updates.</p>
+        {% endif %}
+      </section>
+
+      <!-- Schedule Column (if present) -->
+      {% if brief.schedule %}
+      <section class="section-column">
+        <div class="column-header">
+          <span>Today's Schedule</span>
+          <span class="column-count">{{ brief.schedule | length }}</span>
+        </div>
+        <ul class="item-list">
+          {% for event in brief.schedule %}
+          <li class="item-card">
+            <div class="item-header">
+              <div class="item-title">
+                <strong>{{ event.time }}</strong> — {{ event.title }}
+              </div>
+            </div>
+            {% if event.source %}
+            <div class="item-meta">Source: {{ event.source }}</div>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </section>
+      {% endif %}
+    </main>
+
+    <footer>
+      <span>The Daily Brief • Local Mac Edition</span>
+      <span>Automated morning rollup • 7-day local archive</span>
+    </footer>
+  </div>
+</body>
+</html>
