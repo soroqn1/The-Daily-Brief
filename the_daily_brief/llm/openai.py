@@ -62,16 +62,67 @@ class OpenAIClient(BaseLLMClient):
 
         system_prompt = f"""You are the editor of "The Daily Brief", a morning newspaper.
 Transform raw items from connected sources into a structured briefing in {language}.
+
+Instructions:
+1. Provide a punchy editorial headline summarizing the tone and load of the day.
+2. Group items into the following 4 fixed sections in order:
+   - "action_required": Urgent messages, unanswered emails requiring action,
+     PRs, mentions, or invoices.
+   - "missed": Emails, messages, and updates received overnight or while away.
+   - "schedule": Time-based calendar meetings, events, or scheduled appointments.
+   - "tasks": Open TODOs, goals, and project tasks (e.g. from Obsidian).
+3. All sources (e.g. gmail, gmail_work, obsidian, calendar, slack, telegram)
+   flow into these same sections. Every item MUST have an accurate "source"
+   label (e.g. "gmail", "gmail · work", "obsidian", "calendar", "slack", "telegram").
+4. Within each section, sort items by priority (most urgent first).
+   For schedule items, sort by time. Mark urgent items with "urgent": true.
+5. Provide a concise, actionable "ai_recommendation" guiding what to focus on first.
+6. Preserve URLs where present so the user can click through.
+7. If there are no items for a section, return an empty array [] for that section.
+8. Do NOT fabricate or hallucinate events/emails that are not in the raw input.
+
 Respond ONLY with a JSON object matching this schema:
 {{
   "headline": "String",
-  "missed": [{{"title": "String", "summary": "String", "source": "String", "url": "String"}}],
+  "ai_recommendation": "String",
   "action_required": [
-    {{"title": "String", "summary": "String", "source": "String", "url": "String"}}
+    {{
+      "title": "String",
+      "summary": "String",
+      "source": "String",
+      "urgent": true,
+      "url": "String"
+    }}
   ],
-  "schedule": [{{"time": "String", "title": "String", "source": "String"}}],
-  "tasks": [{{"title": "String", "status": "open", "source": "String", "url": "String"}}],
-  "ai_recommendation": "String"
+  "missed": [
+    {{
+      "title": "String",
+      "summary": "String",
+      "source": "String",
+      "urgent": false,
+      "url": "String"
+    }}
+  ],
+  "schedule": [
+    {{
+      "time": "String",
+      "title": "String",
+      "summary": "String",
+      "source": "String",
+      "urgent": false,
+      "url": "String"
+    }}
+  ],
+  "tasks": [
+    {{
+      "title": "String",
+      "summary": "String",
+      "source": "String",
+      "status": "open",
+      "urgent": false,
+      "url": "String"
+    }}
+  ]
 }}"""
 
         return [

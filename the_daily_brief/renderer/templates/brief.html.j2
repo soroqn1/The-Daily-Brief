@@ -17,125 +17,108 @@
     body {
       background-color: #ffffff;
       color: #111111;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       line-height: 1.5;
-      padding: 32px 20px;
+      padding: 40px 20px;
     }
 
     .container {
-      max-width: 1040px;
+      max-width: 760px;
       margin: 0 auto;
     }
 
     /* Masthead */
     .masthead {
-      text-align: center;
       margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 3px double #111111;
     }
 
-    .masthead-meta {
+    .masthead-bar {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid #111111;
-      color: #333333;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     .masthead-title {
       font-family: 'Playfair Display', Georgia, serif;
-      font-size: clamp(40px, 6vw, 68px);
+      font-size: clamp(32px, 5vw, 44px);
       font-weight: 900;
       letter-spacing: -0.5px;
       text-transform: uppercase;
-      padding: 10px 0;
-      line-height: 1.05;
+      line-height: 1.1;
     }
 
-    .masthead-subline {
-      border-top: 3px double #111111;
-      border-bottom: 1px solid #111111;
-      padding: 6px 0;
-      font-size: 12px;
+    .masthead-meta {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
       font-weight: 500;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      display: flex;
-      justify-content: space-between;
+      color: #333333;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
     }
 
     /* Lead Story */
     .lead-story {
-      padding: 24px 0 20px;
+      padding: 16px 0 24px;
       border-bottom: 1px solid #111111;
-      margin-bottom: 24px;
+      margin-bottom: 32px;
     }
 
     .lead-headline {
       font-family: 'Playfair Display', Georgia, serif;
-      font-size: clamp(26px, 3.5vw, 38px);
+      font-size: clamp(22px, 3.5vw, 30px);
       font-weight: 700;
-      line-height: 1.2;
-      margin-bottom: 16px;
+      line-height: 1.25;
+      margin-bottom: 10px;
     }
 
-    .recommendation-box {
-      border: 1px solid #111111;
-      padding: 16px 20px;
-      background: #fafafa;
-    }
-
-    .recommendation-label {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      margin-bottom: 6px;
-      color: #111111;
-    }
-
-    .recommendation-text {
+    .ai-recommendation {
+      font-family: 'Inter', sans-serif;
       font-size: 15px;
       font-style: italic;
-      color: #222222;
+      color: #333333;
       line-height: 1.5;
     }
 
-    /* Columns Grid */
-    .sections-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 32px;
-    }
-
-    .section-column {
+    /* Sections: Single Scrollable Column */
+    .brief-sections {
       display: flex;
       flex-direction: column;
+      gap: 36px;
     }
 
-    .column-header {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 20px;
-      font-weight: 700;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #111111;
-      margin-bottom: 16px;
+    .brief-section {
+      width: 100%;
+    }
+
+    .section-header {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
+      border-bottom: 2px solid #111111;
+      padding-bottom: 6px;
+      margin-bottom: 14px;
     }
 
-    .column-count {
+    .section-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 18px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .section-count {
       font-family: 'Inter', sans-serif;
       font-size: 12px;
       font-weight: 600;
       color: #666666;
     }
 
+    /* Item List */
     .item-list {
       list-style: none;
     }
@@ -151,7 +134,8 @@
 
     .item-header {
       display: flex;
-      align-items: flex-start;
+      flex-wrap: wrap;
+      align-items: baseline;
       gap: 8px;
       margin-bottom: 4px;
     }
@@ -165,7 +149,21 @@
       padding: 2px 6px;
       letter-spacing: 0.8px;
       border-radius: 2px;
-      flex-shrink: 0;
+      line-height: 1.2;
+    }
+
+    .item-time {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111111;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .source-tag {
+      font-size: 12px;
+      font-weight: 500;
+      color: #666666;
+      letter-spacing: 0.2px;
     }
 
     .item-title {
@@ -176,7 +174,7 @@
     }
 
     .item-title a {
-      color: inherit;
+      color: #111111;
       text-decoration: none;
       border-bottom: 1px dotted #111111;
     }
@@ -192,187 +190,173 @@
       margin-top: 4px;
     }
 
-    .item-meta {
-      font-size: 11px;
-      color: #777777;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+    .item-link {
       margin-top: 6px;
+      font-size: 12px;
+    }
+
+    .item-link a {
+      color: #111111;
+      text-decoration: none;
+      border-bottom: 1px dotted #666666;
+    }
+
+    .item-link a:hover {
+      border-bottom-style: solid;
     }
 
     .empty-state {
       font-size: 13px;
-      font-style: italic;
-      color: #777777;
-      padding: 12px 0;
+      color: #666666;
+      padding: 10px 0;
     }
 
     /* Footer */
     footer {
-      margin-top: 40px;
+      margin-top: 48px;
       padding-top: 16px;
       border-top: 1px solid #111111;
       display: flex;
       justify-content: space-between;
       font-size: 11px;
-      color: #555555;
+      color: #666666;
       letter-spacing: 0.5px;
       text-transform: uppercase;
     }
   </style>
 </head>
 <body>
+  {% macro source_badge(source) %}
+    {% if source %}
+      {% set clean = source.replace('gmail_work', 'gmail · work').strip('[]') %}
+      <span class="source-tag">[{{ clean }}]</span>
+    {% endif %}
+  {% endmacro %}
+
+  {% macro render_item(item, is_schedule=false) %}
+    <li class="item-card">
+      <div class="item-header">
+        {% if item.urgent or item.priority == 1 %}
+        <span class="urgent-badge">Urgent</span>
+        {% endif %}
+        {% if is_schedule and item.time %}
+        <span class="item-time">{{ item.time }}</span>
+        {% endif %}
+        {{ source_badge(item.source) }}
+        <span class="item-title">
+          {% if item.url %}
+          <a href="{{ item.url }}">{{ item.title }}</a>
+          {% else %}
+          {{ item.title }}
+          {% endif %}
+        </span>
+      </div>
+      {% if item.summary %}
+      <p class="item-summary">{{ item.summary }}</p>
+      {% endif %}
+      {% if item.url %}
+      <div class="item-link">
+        <a href="{{ item.url }}">→ Open link</a>
+      </div>
+      {% endif %}
+    </li>
+  {% endmacro %}
+
   <div class="container">
     <header class="masthead">
-      <div class="masthead-meta">
-        <span>macOS Automated Wake Intelligence</span>
-        <span>{{ date_str }}</span>
-        <span>Local Edition</span>
-      </div>
-      <h1 class="masthead-title">The Daily Brief</h1>
-      <div class="masthead-subline">
-        <span>Curated Daily by LLM</span>
-        <span>Issue: {{ issue_number }}</span>
-        <span>Weather: Clear • Focus Day</span>
+      <div class="masthead-bar">
+        <h1 class="masthead-title">The Daily Brief</h1>
+        <div class="masthead-meta">{{ date_str }} · {{ issue_number }}</div>
       </div>
     </header>
 
-    {% if brief.headline %}
+    {% if brief.headline or brief.ai_recommendation %}
     <section class="lead-story">
-      <h2 class="lead-headline">{{ brief.headline }}</h2>
+      {% if brief.headline %}
+      <h2 class="lead-headline">"{{ brief.headline.strip('\"') }}"</h2>
+      {% endif %}
       {% if brief.ai_recommendation %}
-      <div class="recommendation-box">
-        <div class="recommendation-label">Editor's Recommendation</div>
-        <div class="recommendation-text">{{ brief.ai_recommendation }}</div>
-      </div>
+      <p class="ai-recommendation">{{ brief.ai_recommendation }}</p>
       {% endif %}
     </section>
     {% endif %}
 
-    <main class="sections-grid">
-      <!-- Action Required Column -->
-      <section class="section-column">
-        <div class="column-header">
-          <span>Action Required</span>
-          <span class="column-count">{{ brief.action_required | length }}</span>
-        </div>
+    <main class="brief-sections">
+      <!-- 1. Action Required -->
+      <section class="brief-section">
+        <header class="section-header">
+          <h2 class="section-title">Action Required</h2>
+          {% if brief.action_required %}
+          <span class="section-count">{{ brief.action_required | length }}</span>
+          {% endif %}
+        </header>
         {% if brief.action_required %}
         <ul class="item-list">
           {% for item in brief.action_required %}
-          <li class="item-card">
-            <div class="item-header">
-              <span class="urgent-badge">Urgent</span>
-              <div class="item-title">
-                {% if item.url %}
-                <a href="{{ item.url }}">{{ item.title }}</a>
-                {% else %}
-                {{ item.title }}
-                {% endif %}
-              </div>
-            </div>
-            {% if item.summary %}
-            <p class="item-summary">{{ item.summary }}</p>
-            {% endif %}
-            {% if item.source %}
-            <div class="item-meta">Source: {{ item.source }}</div>
-            {% endif %}
-          </li>
+          {{ render_item(item) }}
           {% endfor %}
         </ul>
         {% else %}
-        <p class="empty-state">No urgent items requiring immediate action.</p>
+        <p class="empty-state">All clear ✓</p>
         {% endif %}
       </section>
 
-      <!-- Tasks Column (Obsidian) -->
-      <section class="section-column">
-        <div class="column-header">
-          <span>Tasks & Goals</span>
-          <span class="column-count">{{ brief.tasks | length }}</span>
-        </div>
-        {% if brief.tasks %}
-        <ul class="item-list">
-          {% for task in brief.tasks %}
-          <li class="item-card">
-            <div class="item-header">
-              <div class="item-title">
-                {% if task.url %}
-                <a href="{{ task.url }}">&#9634; {{ task.title }}</a>
-                {% else %}
-                &#9634; {{ task.title }}
-                {% endif %}
-              </div>
-            </div>
-            {% if task.summary %}
-            <p class="item-summary">{{ task.summary }}</p>
-            {% endif %}
-            {% if task.source %}
-            <div class="item-meta">Source: {{ task.source }}</div>
-            {% endif %}
-          </li>
-          {% endfor %}
-        </ul>
-        {% else %}
-        <p class="empty-state">No open tasks recorded for today.</p>
-        {% endif %}
-      </section>
-
-      <!-- Missed & Incoming (Gmail) -->
-      <section class="section-column">
-        <div class="column-header">
-          <span>Incoming & Missed</span>
-          <span class="column-count">{{ brief.missed | length }}</span>
-        </div>
+      <!-- 2. Missed Overnight -->
+      <section class="brief-section">
+        <header class="section-header">
+          <h2 class="section-title">Missed Overnight</h2>
+          {% if brief.missed %}
+          <span class="section-count">{{ brief.missed | length }}</span>
+          {% endif %}
+        </header>
         {% if brief.missed %}
         <ul class="item-list">
           {% for item in brief.missed %}
-          <li class="item-card">
-            <div class="item-header">
-              <div class="item-title">
-                {% if item.url %}
-                <a href="{{ item.url }}">{{ item.title }}</a>
-                {% else %}
-                {{ item.title }}
-                {% endif %}
-              </div>
-            </div>
-            {% if item.summary %}
-            <p class="item-summary">{{ item.summary }}</p>
-            {% endif %}
-            {% if item.source %}
-            <div class="item-meta">Source: {{ item.source }}</div>
-            {% endif %}
-          </li>
+          {{ render_item(item) }}
           {% endfor %}
         </ul>
         {% else %}
-        <p class="empty-state">No unread or incoming updates.</p>
+        <p class="empty-state">All clear ✓</p>
         {% endif %}
       </section>
 
-      <!-- Schedule Column (if present) -->
-      {% if brief.schedule %}
-      <section class="section-column">
-        <div class="column-header">
-          <span>Today's Schedule</span>
-          <span class="column-count">{{ brief.schedule | length }}</span>
-        </div>
+      <!-- 3. Today's Schedule -->
+      <section class="brief-section">
+        <header class="section-header">
+          <h2 class="section-title">Today's Schedule</h2>
+          {% if brief.schedule %}
+          <span class="section-count">{{ brief.schedule | length }}</span>
+          {% endif %}
+        </header>
+        {% if brief.schedule %}
         <ul class="item-list">
-          {% for event in brief.schedule %}
-          <li class="item-card">
-            <div class="item-header">
-              <div class="item-title">
-                <strong>{{ event.time }}</strong> — {{ event.title }}
-              </div>
-            </div>
-            {% if event.source %}
-            <div class="item-meta">Source: {{ event.source }}</div>
-            {% endif %}
-          </li>
+          {% for item in brief.schedule %}
+          {{ render_item(item, is_schedule=true) }}
           {% endfor %}
         </ul>
+        {% else %}
+        <p class="empty-state">All clear ✓</p>
+        {% endif %}
       </section>
-      {% endif %}
+
+      <!-- 4. Tasks & Goals -->
+      <section class="brief-section">
+        <header class="section-header">
+          <h2 class="section-title">Tasks & Goals</h2>
+          {% if brief.tasks %}
+          <span class="section-count">{{ brief.tasks | length }}</span>
+          {% endif %}
+        </header>
+        {% if brief.tasks %}
+        <ul class="item-list">
+          {% for item in brief.tasks %}
+          {{ render_item(item) }}
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="empty-state">All clear ✓</p>
+        {% endif %}
+      </section>
     </main>
 
     <footer>

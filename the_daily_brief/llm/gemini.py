@@ -68,26 +68,64 @@ Raw Items Input:
 
 Instructions:
 1. Provide a punchy editorial headline summarizing the tone and load of the day.
-2. Group items logically:
-   - "missed": Important or missed items that arrived (e.g. unread emails).
-   - "action_required": Urgent messages, invoices, or critical flags requiring action.
-   - "schedule": Time-based meetings, events, or deadlines if present.
-   - "tasks": Open TODOs and tasks (e.g. from Obsidian), keeping status "open".
-3. Provide a concise, actionable "ai_recommendation" guiding what to do first.
-4. Preserve URLs where present so the user can click through.
-5. If there are no items in a category, return an empty array for that category.
-6. Do NOT fabricate or hallucinate events/emails that are not in the raw input.
+2. Group items into the following 4 fixed sections in order:
+   - "action_required": Urgent messages, unanswered emails requiring action,
+     PRs, mentions, or invoices.
+   - "missed": Emails, messages, and updates received overnight or while away.
+   - "schedule": Time-based calendar meetings, events, or scheduled appointments.
+   - "tasks": Open TODOs, goals, and project tasks (e.g. from Obsidian).
+3. All sources (e.g. gmail, gmail_work, obsidian, calendar, slack, telegram)
+   flow into these same sections. Every item MUST have an accurate "source"
+   label (e.g. "gmail", "gmail · work", "obsidian", "calendar", "slack", "telegram").
+4. Within each section, sort items by priority (most urgent first).
+   For schedule items, sort by time. Mark urgent items with "urgent": true.
+5. Provide a concise, actionable "ai_recommendation" guiding what to focus on first.
+6. Preserve URLs where present so the user can click through.
+7. If there are no items for a section, return an empty array [] for that section.
+8. Do NOT fabricate or hallucinate events/emails that are not in the raw input.
 
 Return ONLY a valid JSON object with this exact structure:
 {{
   "headline": "String",
-  "missed": [{{"title": "String", "summary": "String", "source": "String", "url": "String"}}],
+  "ai_recommendation": "String",
   "action_required": [
-    {{"title": "String", "summary": "String", "source": "String", "url": "String"}}
+    {{
+      "title": "String",
+      "summary": "String",
+      "source": "String",
+      "urgent": true,
+      "url": "String"
+    }}
   ],
-  "schedule": [{{"time": "String", "title": "String", "source": "String"}}],
-  "tasks": [{{"title": "String", "status": "open", "source": "String", "url": "String"}}],
-  "ai_recommendation": "String"
+  "missed": [
+    {{
+      "title": "String",
+      "summary": "String",
+      "source": "String",
+      "urgent": false,
+      "url": "String"
+    }}
+  ],
+  "schedule": [
+    {{
+      "time": "String",
+      "title": "String",
+      "summary": "String",
+      "source": "String",
+      "urgent": false,
+      "url": "String"
+    }}
+  ],
+  "tasks": [
+    {{
+      "title": "String",
+      "summary": "String",
+      "source": "String",
+      "status": "open",
+      "urgent": false,
+      "url": "String"
+    }}
+  ]
 }}"""
 
     async def generate(self, items: list[BriefItem]) -> BriefData:

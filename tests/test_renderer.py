@@ -13,17 +13,16 @@ def test_render_brief_basic() -> None:
             {
                 "title": "Production 500 Errors",
                 "summary": "High error rate on API gateway",
-                "source": "gmail",
+                "source": "gmail_work",
+                "urgent": True,
                 "url": "https://mail.google.com/mail/u/0/#inbox/123",
-            }
-        ],
-        tasks=[
+            },
             {
-                "title": "Review Q3 Roadmap",
-                "summary": "Check priorities",
-                "source": "obsidian",
-                "url": "obsidian://open?vault=obsidian&file=50%20Daily%2Fnote.md",
-            }
+                "title": "Invoice from Stripe",
+                "summary": "Monthly billing ready",
+                "source": "gmail",
+                "urgent": False,
+            },
         ],
         missed=[
             {
@@ -37,6 +36,14 @@ def test_render_brief_basic() -> None:
                 "time": "11:00 AM",
                 "title": "Design Review",
                 "source": "calendar",
+            }
+        ],
+        tasks=[
+            {
+                "title": "Review Q3 Roadmap",
+                "summary": "Check priorities",
+                "source": "obsidian",
+                "url": "obsidian://open?vault=obsidian&file=50%20Daily%2Fnote.md",
             }
         ],
     )
@@ -58,11 +65,28 @@ def test_render_brief_basic() -> None:
     assert (obsidian_encoded in html) or (obsidian_raw in html)
     assert "Team newsletter" in html
     assert "11:00 AM" in html
+
+    # Urgent badge and accent color
     assert "Urgent" in html
+    assert "#c92a2a" in html
+
+    # Source tags across different sources
+    assert "[gmail · work]" in html
+    assert "[gmail]" in html
+    assert "[obsidian]" in html
+    assert "[calendar]" in html
+
+    # Order of 4 fixed sections:
+    # Action Required -> Missed Overnight -> Today's Schedule -> Tasks & Goals
+    pos_action = html.index("Action Required")
+    pos_missed = html.index("Missed Overnight")
+    pos_schedule = html.index("Today's Schedule")
+    pos_tasks = html.index("Tasks & Goals")
+    assert pos_action < pos_missed < pos_schedule < pos_tasks
 
 
 def test_render_brief_empty_state() -> None:
-    """Test rendering brief when all categories are empty."""
+    """Test rendering brief when all categories are empty: all 4 sections show 'All clear ✓'."""
     brief = BriefData(
         headline="Quiet Morning",
         ai_recommendation="Enjoy your coffee.",
@@ -71,6 +95,14 @@ def test_render_brief_empty_state() -> None:
     html = render_brief(brief)
     assert "Quiet Morning" in html
     assert "Enjoy your coffee." in html
-    assert "No urgent items requiring immediate action." in html
-    assert "No open tasks recorded for today." in html
-    assert "No unread or incoming updates." in html
+
+    # All 4 sections rendered in order even when empty
+    pos_action = html.index("Action Required")
+    pos_missed = html.index("Missed Overnight")
+    pos_schedule = html.index("Today's Schedule")
+    pos_tasks = html.index("Tasks & Goals")
+    assert pos_action < pos_missed < pos_schedule < pos_tasks
+
+    # Each empty section renders "All clear ✓"
+    assert "All clear ✓" in html
+    assert html.count("All clear ✓") == 4

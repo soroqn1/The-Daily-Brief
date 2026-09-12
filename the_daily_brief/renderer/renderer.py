@@ -25,8 +25,9 @@ def render_brief(
 ) -> str:
     """Render BriefData into a newspaper-style HTML document."""
     now = datetime.now()
-    formatted_date = date_str or now.strftime("%A, %B %d, %Y")
-    formatted_issue = issue_number or now.strftime("Vol. %Y • No. %j")
+    formatted_date = date_str or now.strftime("%A, %b %d")
+    day_of_year = now.strftime("%j").lstrip("0") or "1"
+    formatted_issue = issue_number or f"#{day_of_year}"
 
     env = get_template_env()
     template = env.get_template("brief.html.j2")
