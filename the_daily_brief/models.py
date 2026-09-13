@@ -50,4 +50,32 @@ class BriefData:
         )
 
 
-__all__ = ["BriefData", "BriefItem"]
+@dataclass
+class EmailAuditData:
+    """Structured data returned by LLM for email audit."""
+
+    headline: str = ""
+    summary: str = ""
+    needs_reply: list[dict[str, Any]] = field(default_factory=list)
+    commitments_and_pending: list[dict[str, Any]] = field(default_factory=list)
+    deadlines_and_urgent: list[dict[str, Any]] = field(default_factory=list)
+    checklist: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert EmailAuditData to a dictionary."""
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "EmailAuditData":
+        """Create EmailAuditData from dictionary safely."""
+        return cls(
+            headline=str(data.get("headline", "")),
+            summary=str(data.get("summary", "")),
+            needs_reply=list(data.get("needs_reply", [])),
+            commitments_and_pending=list(data.get("commitments_and_pending", [])),
+            deadlines_and_urgent=list(data.get("deadlines_and_urgent", [])),
+            checklist=list(data.get("checklist", [])),
+        )
+
+
+__all__ = ["BriefData", "BriefItem", "EmailAuditData"]
