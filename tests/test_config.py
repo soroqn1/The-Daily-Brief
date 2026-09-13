@@ -10,24 +10,30 @@ def test_load_config_defaults(tmp_path: Path) -> None:
     non_existent = tmp_path / "missing.yaml"
     config = load_config(config_path=non_existent)
 
-    assert config.brief_after_hour == 9
+    assert config.storage_dir == Path("~/Desktop/TheDailyBrief").expanduser()
     assert config.brief_language == "en"
     assert config.llm.provider == "gemini"
     assert config.llm.model == "gemini-2.0-flash"
     assert config.briefs_dir == config.output_dir / "briefs"
     assert config.state_file == config.output_dir / "state.json"
     assert config.logs_dir == config.output_dir / "logs"
+    assert "default" in config.spaces
 
 
 def test_load_config_from_yaml(tmp_path: Path) -> None:
     """Test loading configuration from a valid YAML file."""
     yaml_content = """
 output_dir: /tmp/test-brief
-brief_after_hour: 8
+storage_dir: /tmp/test-saves
 brief_language: ru
 llm:
   provider: openai
   model: gpt-4o
+spaces:
+  work:
+    gmail_token_env: GMAIL_REFRESH_TOKEN_WORK
+    audit_days: 7
+    obsidian_enabled: false
 connectors:
   gmail:
     enabled: true
@@ -38,9 +44,13 @@ connectors:
 
     config = load_config(config_path=config_file)
     assert config.output_dir == Path("/tmp/test-brief")
-    assert config.brief_after_hour == 8
+    assert config.storage_dir == Path("/tmp/test-saves")
     assert config.brief_language == "ru"
     assert config.llm.provider == "openai"
     assert config.llm.model == "gpt-4o"
+    assert "work" in config.spaces
+    assert config.spaces["work"].gmail_token_env == "GMAIL_REFRESH_TOKEN_WORK"
+    assert config.spaces["work"].gmail_audit_days == 7
+    assert config.spaces["work"].obsidian_enabled is False
     assert config.connectors["gmail"]["enabled"] is True
     assert config.connectors["gmail"]["max_emails"] == 10
