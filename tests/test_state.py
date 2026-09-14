@@ -1,20 +1,28 @@
 """Tests for state management."""
 
-from datetime import date, datetime
+from datetime import date
 from pathlib import Path
 
-from the_daily_brief.state import load_state, too_early
+from the_daily_brief.state import load_state
 
 
-def test_too_early() -> None:
-    """Test cutoff time check."""
-    early_time = datetime(2026, 9, 12, 8, 30)
-    exact_time = datetime(2026, 9, 12, 9, 0)
-    late_time = datetime(2026, 9, 12, 10, 15)
+def test_state_space_reports(tmp_path: Path) -> None:
+    """Test space-aware report tracking."""
+    state_file = tmp_path / "state.json"
+    state = load_state(path=state_file)
 
-    assert too_early(cutoff_hour=9, now=early_time) is True
-    assert too_early(cutoff_hour=9, now=exact_time) is False
-    assert too_early(cutoff_hour=9, now=late_time) is False
+    assert state.is_generated_today("work", "daily") is False
+    assert state.is_generated_today("work", "email") is False
+
+    today = date.today()
+    state.mark_done(today, space="work", report_type="daily")
+
+    assert state.is_generated_today("work", "daily") is True
+    assert state.is_generated_today("work", "email") is False
+    assert state.is_generated_today("study", "daily") is False
+
+    reloaded = load_state(path=state_file)
+    assert reloaded.is_generated_today("work", "daily") is True
 
 
 def test_state_defaults_when_missing(tmp_path: Path) -> None:
