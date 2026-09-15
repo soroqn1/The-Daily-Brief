@@ -144,3 +144,32 @@ async def test_gmail_network_exception_handled_gracefully(monkeypatch: pytest.Mo
         connector = GmailConnector()
         items = await connector.fetch()
         assert items == []
+
+
+@pytest.mark.asyncio
+async def test_gmail_instance_config_override(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that custom instance parameters (scan_hours, max_emails) override defaults."""
+    captured_params: list[dict[str, object]] = []
+
+    def mock_handler(request: httpx.Request) -> httpx.Response:
+        url_str = str(request.url)
+        if "oauth2.googleapis.com" in url_str:
+            return httpx.Response(200, json={"access_token": "mock_token"})
+        if "/messages" in url_str:
+            captured_params.append(dict(request.url.params))
+            return httpx.Response(200, json={"messages": []})
+        return httpx.Response(404)
+
+    transport = httpx.MockTransport(mock_handler)
+    connector = GmailConnector(
+        client_id="id",
+        client_secret="sec",
+        refresh_token="tok",
+        scan_hours=48,
+        max_emails=5,
+    )
+    with patch("httpx.AsyncClient", return_value=httpx.AsyncClient(transport=transport)):
+        await connector.fetch()
+
+    # Verify maxResults was set to 5 rather than default 20
+    assert any(p.get("maxResults") == "5" for p in captured_params)
