@@ -9,7 +9,7 @@ import httpx
 
 from the_daily_brief.config import get_config
 from the_daily_brief.llm.base import BaseLLMClient
-from the_daily_brief.models import BriefData, BriefItem
+from the_daily_brief.models import BriefData, BriefItem, EmailAuditData
 
 logger = logging.getLogger(__name__)
 
@@ -169,6 +169,120 @@ Respond ONLY with a JSON object matching this schema:
             content = data["choices"][0]["message"]["content"]
             parsed = json.loads(content)
             return BriefData.from_dict(parsed)
+        except (KeyError, IndexError, json.JSONDecodeError) as err:
+            logger.error("Failed to parse OpenAI response payload: %s", data, exc_info=True)
+            raise RuntimeError(f"Failed to parse structured response from OpenAI: {err}") from err
+
+    def _build_email_audit_messages(
+        self, items: list[BriefItem], language: str
+    ) -> list[dict[str, str]]:
+        """Build messages payload for OpenAI Chat Completions email audit."""
+        formatted_items: list[dict[str, Any]] = []
+        for item in items:
+            formatted_items.append(
+                {
+                    "source": item.source,
+                    "title": item.title,
+                    "body": item.body,
+                    "timestamp": item.timestamp.isoformat() if item.timestamp else None,
+                    "url": item.url,
+                }
+            )
+
+        items_json = json.dumps(formatted_items, ensure_ascii=False, indent=2)
+
+        system_prompt = (
+            f"You are an executive assistant conducting a deep email audit in {language}.\n"
+            "Review recent emails and identify:\n"
+            '1. "needs_reply": Emails expecting a reply, action, or answer. Include urgent flag.\n'
+            '2. "commitments_and_pending": Promises, commitments made, in-flight agreements.\n'
+            '3. "deadlines_and_urgent": Upcoming deadlines, expiring links, bills, urgent alerts.\n'
+            '4. "checklist": Actionable checklist of things to finish or people to reply to.\n'
+            '5. "headline": Editorial summary headline of inbox status.\n'
+            '6. "summary": A 1-2 sentence overview of recent communications.\n\n'
+            "Respond ONLY with a JSON object matching this schema:\n"
+            "{\n"
+            '  "headline": "String",\n'
+            '  "summary": "String",\n'
+            '  "needs_reply": [\n'
+            "    {\n"
+            '      "title": "String",\n'
+            '      "sender": "String",\n'
+            '      "summary": "String",\n'
+            '      "urgent": true,\n'
+            '      "url": "String"\n'
+            "    }\n"
+            "  ],\n"
+            '  "commitments_and_pending": [\n'
+            "    {\n"
+            '      "title": "String",\n'
+            '      "summary": "String",\n'
+            '      "url": "String"\n'
+            "    }\n"
+            "  ],\n"
+            '  "deadlines_and_urgent": [\n'
+            "    {\n"
+            '      "title": "String",\n'
+            '      "summary": "String",\n'
+            '      "date": "String",\n'
+            '      "url": "String"\n'
+            "    }\n"
+            "  ],\n"
+            '  "checklist": [\n'
+            '    "String"\n'
+            "  ]\n"
+            "}"
+        )
+
+        return [
+            {"role": "system", "content": system_prompt},
+            {
+                "role": "user",
+                "content": f"Here are the recent emails to audit:\n{items_json}",
+            },
+        ]
+
+    async def generate_email_audit(self, items: list[BriefItem]) -> EmailAuditData:
+        """Send raw email items to OpenAI API and receive structured EmailAuditData."""
+        api_key = self._resolve_api_key()
+        model = self._resolve_model()
+        config = get_config()
+        language = config.brief_language or "en"
+
+        messages = self._build_email_audit_messages(items, language=language)
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "model": model,
+            "response_format": {"type": "json_object"},
+            "messages": messages,
+            "temperature": 0.2,
+        }
+
+        logger.info(
+            "Calling OpenAI API for email audit with model %s (%d items)", model, len(items)
+        )
+
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(OPENAI_API_URL, headers=headers, json=payload)
+            if response.status_code != 200:
+                logger.error(
+                    "OpenAI API email audit call failed (status %d): %s",
+                    response.status_code,
+                    response.text,
+                )
+                raise RuntimeError(
+                    f"OpenAI API request failed with status {response.status_code}: {response.text}"
+                )
+
+            data = response.json()
+
+        try:
+            content = data["choices"][0]["message"]["content"]
+            parsed = json.loads(content)
+            return EmailAuditData.from_dict(parsed)
         except (KeyError, IndexError, json.JSONDecodeError) as err:
             logger.error("Failed to parse OpenAI response payload: %s", data, exc_info=True)
             raise RuntimeError(f"Failed to parse structured response from OpenAI: {err}") from err
