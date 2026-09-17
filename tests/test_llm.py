@@ -1,12 +1,18 @@
 """Tests for LLM clients and data models."""
 
+import json
 from unittest.mock import patch
 
 import httpx
 import pytest
 
 from the_daily_brief.connectors.base import BriefItem
-from the_daily_brief.llm import GeminiClient, OpenAIClient, get_llm_client
+from the_daily_brief.llm import (
+    GeminiClient,
+    OpenAIClient,
+    get_llm_client,
+    test_llm_connection,
+)
 from the_daily_brief.models import BriefData
 
 
@@ -155,3 +161,43 @@ async def test_openai_successful_generate(monkeypatch: pytest.MonkeyPatch) -> No
         assert result.headline == "OpenAI Brief"
         assert len(result.tasks) == 1
         assert result.ai_recommendation == "Relax today"
+
+
+@pytest.mark.asyncio
+async def test_test_llm_connection_gemini(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test test_llm_connection sending 'ping' to Gemini."""
+    monkeypatch.setenv("GEMINI_API_KEY", "test_gemini_key")
+
+    mock_resp = {
+        "candidates": [
+            {
+                "content": {
+                    "parts": [{"text": "pong"}],
+                    "role": "model",
+                }
+            }
+        ]
+    }
+
+    def mock_handler(request: httpx.Request) -> httpx.Response:
+        assert "generateContent" in str(request.url)
+        content = json.loads(request.content.decode("utf-8"))
+        assert content["contents"][0]["parts"][0]["text"] == "ping"
+        return httpx.Response(200, json=mock_resp)
+
+    transport = httpx.MockTransport(mock_handler)
+    with patch("httpx.AsyncClient", return_value=httpx.AsyncClient(transport=transport)):
+        ok, msg, reply = await test_llm_connection("gemini")
+        assert ok is True
+        assert "Gemini API connected" in msg
+        assert reply == "pong"
+
+
+@pytest.mark.asyncio
+async def test_test_llm_connection_gemini_missing_key(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test test_llm_connection when GEMINI_API_KEY is missing."""
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    ok, msg, reply = await test_llm_connection("gemini")
+    assert ok is False
+    assert "GEMINI_API_KEY is missing" in msg
+    assert reply is None
