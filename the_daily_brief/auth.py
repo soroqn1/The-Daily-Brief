@@ -20,31 +20,67 @@ SCOPES = "https://www.googleapis.com/auth/gmail.readonly"
 TOKEN_URL = "https://oauth2.googleapis.com/token"
 
 
-def save_refresh_token_to_env(client_id: str, client_secret: str, refresh_token: str) -> None:
-    """Save credentials and refresh token to .env file."""
+def update_env_vars(vars_to_update: dict[str, str]) -> None:
+    """Update or append environment variables in .env and os.environ atomically."""
+    for k, v in vars_to_update.items():
+        if "\n" in str(k) or "\r" in str(k) or "\n" in str(v) or "\r" in str(v):
+            raise ValueError(f"Newline characters are not allowed in env vars: {k}")
+
     load_dotenv(ENV_FILE)
     existing_lines: list[str] = []
     if ENV_FILE.is_file():
         existing_lines = ENV_FILE.read_text(encoding="utf-8").splitlines()
 
-    updated = False
+    updated_keys = set()
     new_lines: list[str] = []
     for line in existing_lines:
-        if line.startswith("GMAIL_REFRESH_TOKEN="):
-            new_lines.append(f"GMAIL_REFRESH_TOKEN={refresh_token}")
-            updated = True
-        else:
+        matched = False
+        for k, v in vars_to_update.items():
+            prefix = f"{k}="
+            if line.startswith(prefix):
+                new_lines.append(f"{prefix}{v}")
+                updated_keys.add(k)
+                matched = True
+                break
+        if not matched:
             new_lines.append(line)
 
-    if not updated:
-        new_lines.append(f"GMAIL_REFRESH_TOKEN={refresh_token}")
+    for k, v in vars_to_update.items():
+        if k not in updated_keys:
+            new_lines.append(f"{k}={v}")
 
-    ENV_FILE.write_text("\n".join(new_lines) + "\n", encoding="utf-8")
-    logger.info("Successfully updated %s with GMAIL_REFRESH_TOKEN!", ENV_FILE)
+    tmp_file = ENV_FILE.with_suffix(".tmp")
+    tmp_file.write_text("\n".join(new_lines) + "\n", encoding="utf-8")
+    os.replace(tmp_file, ENV_FILE)
+
+    for k, v in vars_to_update.items():
+        os.environ[k] = v
+    logger.info("Updated %s with keys: %s", ENV_FILE, list(vars_to_update.keys()))
 
 
-def run_auth(port: int = 8080) -> None:
+def save_refresh_token_to_env(
+    client_id: str,
+    client_secret: str,
+    refresh_token: str,
+    token_env: str = "GMAIL_REFRESH_TOKEN",
+) -> None:
+    """Save credentials and refresh token to .env file."""
+    updates = {token_env: refresh_token}
+    if client_id:
+        updates["GMAIL_CLIENT_ID"] = client_id
+    if client_secret:
+        updates["GMAIL_CLIENT_SECRET"] = client_secret
+    update_env_vars(updates)
+
+
+def run_auth(port: int = 8080, space: str = "default") -> None:
     """Run local server to capture OAuth redirect code."""
+    from the_daily_brief.config import get_config
+
+    config = get_config()
+    space_cfg = config.get_space(space)
+    token_env = space_cfg.gmail_token_env
+
     load_dotenv(ENV_FILE)
     client_id = os.getenv("GMAIL_CLIENT_ID")
     client_secret = os.getenv("GMAIL_CLIENT_SECRET")
@@ -82,15 +118,20 @@ def run_auth(port: int = 8080) -> None:
                     b"<p>You can close this tab and return to the terminal.</p></body></html>"
                 )
             else:
+                err_msg = params.get("error", ["Failed to obtain authorization code"])[0]
+                auth_code = ""
                 self.send_response(400)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
                 self.end_headers()
-                self.wfile.write(b"Failed to obtain authorization code.")
+                self.wfile.write(
+                    f"<html><body><h2>OAuth Error</h2><p>{err_msg}</p></body></html>".encode()
+                )
 
         def log_message(self, format: str, *args: object) -> None:
             pass
 
     server = HTTPServer(("localhost", port), OAuthHandler)
-    logger.info("Opening browser for Gmail authorization...")
+    logger.info("Opening browser for Gmail authorization for space '%s'...", space)
     logger.info("If the browser does not open automatically, open this URL:\n%s\n", auth_url)
     webbrowser.open(auth_url)
 
@@ -98,6 +139,10 @@ def run_auth(port: int = 8080) -> None:
         server.handle_request()
 
     server.server_close()
+
+    if not auth_code:
+        logger.error("Authorization failed or was cancelled by user.")
+        sys.exit(1)
 
     logger.info("Exchanging authorization code for refresh token...")
     token_payload = {
@@ -120,9 +165,21 @@ def run_auth(port: int = 8080) -> None:
             logger.error("Google did not return a refresh_token: %s", tokens)
             sys.exit(1)
 
-    save_refresh_token_to_env(client_id, client_secret, refresh_token)
-    logger.info("Gmail authorization complete! You can now run `task brief-now`.")
+    save_refresh_token_to_env(client_id, client_secret, refresh_token, token_env=token_env)
+    logger.info("Gmail authorization complete for space '%s' (%s)!", space, token_env)
 
 
 if __name__ == "__main__":
-    run_auth()
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Authorize Gmail account for a space.")
+    parser.add_argument(
+        "--space",
+        "-s",
+        default="default",
+        help="Space profile to authorize (e.g. default, work, study)",
+    )
+    parser.add_argument("--port", "-p", type=int, default=8080, help="Local redirect port")
+    cli_args = parser.parse_args()
+
+    run_auth(port=cli_args.port, space=cli_args.space)
