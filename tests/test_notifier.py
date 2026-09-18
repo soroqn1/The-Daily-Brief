@@ -15,7 +15,7 @@ def test_notify_success() -> None:
         mock_run.assert_called_once()
         cmd = mock_run.call_args[0][0]
         assert "display notification" in cmd[2]
-        assert "Brief ready" in cmd[2]
+        assert "Brief ready" in cmd
 
 
 def test_notify_failure_status() -> None:
