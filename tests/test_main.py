@@ -63,38 +63,23 @@ def test_cleanup_old_briefs(tmp_path: Path) -> None:
 
 
 @pytest.mark.asyncio
-async def test_run_skips_when_already_generated(tmp_path: Path) -> None:
-    """Test orchestrator exits silently if brief already generated today."""
-    dummy_config = Config(output_dir=tmp_path)
-    mock_state = State(last_brief_date=date.today().isoformat())
+async def test_run_reuses_existing_brief_when_not_forced(tmp_path: Path) -> None:
+    """Test orchestrator reuses existing generated brief if force=False."""
+    dummy_config = Config(output_dir=tmp_path, storage_dir=tmp_path / "saves")
+    space_dir = dummy_config.get_space_dir("default")
+    (space_dir / "daily.html").write_text("Existing HTML", encoding="utf-8")
+    (space_dir / "daily.md").write_text("Existing MD", encoding="utf-8")
 
-    with (
-        patch("the_daily_brief.main.get_config", return_value=dummy_config),
-        patch("the_daily_brief.main.load_state", return_value=mock_state),
-    ):
-        result = await run(open_browser=False)
-        assert result is None
-
-
-@pytest.mark.asyncio
-async def test_run_skips_when_too_early(tmp_path: Path) -> None:
-    """Test orchestrator exits silently if before 09:00 cutoff."""
-    dummy_config = Config(output_dir=tmp_path, brief_after_hour=10)
-    mock_state = State(last_brief_date=None)
-
-    with (
-        patch("the_daily_brief.main.get_config", return_value=dummy_config),
-        patch("the_daily_brief.main.load_state", return_value=mock_state),
-        patch("the_daily_brief.main.too_early", return_value=True),
-    ):
-        result = await run(open_browser=False)
-        assert result is None
+    with patch("the_daily_brief.main.get_config", return_value=dummy_config):
+        result = await run(open_browser=False, force=False)
+        assert result is not None
+        assert result.read_text(encoding="utf-8") == "Existing HTML"
 
 
 @pytest.mark.asyncio
-async def test_run_force_bypasses_cutoff(tmp_path: Path) -> None:
-    """Test that force=True bypasses early hour and idempotency."""
-    dummy_config = Config(output_dir=tmp_path)
+async def test_run_force_regenerates(tmp_path: Path) -> None:
+    """Test that force=True regenerates even if files already exist."""
+    dummy_config = Config(output_dir=tmp_path, storage_dir=tmp_path / "saves")
     state_file = tmp_path / "state.json"
     dummy_config.ensure_directories()
     mock_state = State(last_brief_date=date.today().isoformat(), _path=state_file)
@@ -105,8 +90,7 @@ async def test_run_force_bypasses_cutoff(tmp_path: Path) -> None:
     with (
         patch("the_daily_brief.main.get_config", return_value=dummy_config),
         patch("the_daily_brief.main.load_state", return_value=mock_state),
-        patch("the_daily_brief.main.too_early", return_value=True),
-        patch("the_daily_brief.main.get_active_connectors", return_value=[]),
+        patch("the_daily_brief.main.get_connectors_for_space", return_value=[]),
         patch("the_daily_brief.main.get_llm_client", return_value=mock_llm),
     ):
         result = await run(open_browser=False, force=True)
@@ -117,7 +101,7 @@ async def test_run_force_bypasses_cutoff(tmp_path: Path) -> None:
 @pytest.mark.asyncio
 async def test_run_llm_failure_triggers_notification(tmp_path: Path) -> None:
     """Test that LLM API failure triggers macOS notification and exits."""
-    dummy_config = Config(output_dir=tmp_path, brief_after_hour=8)
+    dummy_config = Config(output_dir=tmp_path, storage_dir=tmp_path / "saves")
     mock_state = State(last_brief_date=None)
 
     mock_llm = AsyncMock()
@@ -126,12 +110,11 @@ async def test_run_llm_failure_triggers_notification(tmp_path: Path) -> None:
     with (
         patch("the_daily_brief.main.get_config", return_value=dummy_config),
         patch("the_daily_brief.main.load_state", return_value=mock_state),
-        patch("the_daily_brief.main.too_early", return_value=False),
-        patch("the_daily_brief.main.get_active_connectors", return_value=[]),
+        patch("the_daily_brief.main.get_connectors_for_space", return_value=[]),
         patch("the_daily_brief.main.get_llm_client", return_value=mock_llm),
         patch("the_daily_brief.main.notify") as mock_notify,
     ):
-        result = await run(open_browser=False)
+        result = await run(open_browser=False, force=True)
         assert result is None
         mock_notify.assert_called_once()
         assert "API rate limit exceeded" in mock_notify.call_args[1]["message"]
@@ -139,8 +122,8 @@ async def test_run_llm_failure_triggers_notification(tmp_path: Path) -> None:
 
 @pytest.mark.asyncio
 async def test_run_success_flow(tmp_path: Path) -> None:
-    """Test complete successful generation flow."""
-    dummy_config = Config(output_dir=tmp_path, brief_after_hour=8)
+    """Test complete successful daily brief generation flow."""
+    dummy_config = Config(output_dir=tmp_path, storage_dir=tmp_path / "saves")
     state_file = tmp_path / "state.json"
     dummy_config.ensure_directories()
     mock_state = State(last_brief_date=None, _path=state_file)
@@ -161,12 +144,16 @@ async def test_run_success_flow(tmp_path: Path) -> None:
     with (
         patch("the_daily_brief.main.get_config", return_value=dummy_config),
         patch("the_daily_brief.main.load_state", return_value=mock_state),
-        patch("the_daily_brief.main.too_early", return_value=False),
-        patch("the_daily_brief.main.get_active_connectors", return_value=[mock_connector]),
+        patch("the_daily_brief.main.get_connectors_for_space", return_value=[mock_connector]),
         patch("the_daily_brief.main.get_llm_client", return_value=mock_llm),
     ):
-        brief_path = await run(open_browser=False)
+        brief_path = await run(open_browser=False, force=True)
         assert brief_path is not None
         assert brief_path.is_file()
         assert "Great Success" in brief_path.read_text(encoding="utf-8")
+
+        # Verify markdown file was also generated
+        md_file = brief_path.parent / "daily.md"
+        assert md_file.is_file()
+        assert "Great Success" in md_file.read_text(encoding="utf-8")
         assert mock_state.brief_generated_today is True
