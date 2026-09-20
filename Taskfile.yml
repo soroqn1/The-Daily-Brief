@@ -1,15 +1,25 @@
 version: '3'
 
 tasks:
-  brief-now:
-    desc: Force generate and display today's brief immediately in browser
+  serve:
+    desc: Run local FastAPI server on http://localhost:8000
     cmds:
-      - uv run python -m the_daily_brief.main --force
+      - uv run uvicorn the_daily_brief.server:app --port 8000 --reload
+
+  brief-now:
+    desc: Force generate and display today's daily brief immediately in browser
+    cmds:
+      - uv run python -m the_daily_brief.main daily --force {{.CLI_ARGS}}
+
+  email-now:
+    desc: Force generate and display today's email audit immediately in browser
+    cmds:
+      - uv run python -m the_daily_brief.main email --force {{.CLI_ARGS}}
 
   auth-gmail:
-    desc: Authorize Gmail via browser and save refresh token to .env
+    desc: Authorize Gmail via browser and save refresh token to .env (pass --space <name>)
     cmds:
-      - uv run python -m the_daily_brief.auth
+      - uv run python -m the_daily_brief.auth {{.CLI_ARGS}}
 
   ruff:
     desc: Run ruff linter and format check
@@ -33,20 +43,3 @@ tasks:
     cmds:
       - task: ruff
       - task: test
-
-  install-agent:
-    desc: Install and load macOS launchd agent
-    cmds:
-      - mkdir -p ~/Library/LaunchAgents ~/.the-daily-brief/logs
-      - cp trigger/com.dailybrief.plist ~/Library/LaunchAgents/com.dailybrief.plist
-      - launchctl unload ~/Library/LaunchAgents/com.dailybrief.plist 2>/dev/null || true
-      - launchctl load ~/Library/LaunchAgents/com.dailybrief.plist
-      - echo "LaunchAgent loaded successfully."
-
-  uninstall-agent:
-    desc: Unload and remove macOS launchd agent
-    cmds:
-      - launchctl unload ~/Library/LaunchAgents/com.dailybrief.plist 2>/dev/null || true
-      - rm -f ~/Library/LaunchAgents/com.dailybrief.plist
-      - echo "LaunchAgent uninstalled."
-

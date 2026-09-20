@@ -1,16 +1,32 @@
-output_dir: ~/.the-daily-brief        # where briefs & state are stored
-brief_after_hour: 9               # don't generate before this hour
+output_dir: ~/.the-daily-brief        # internal logs & state
+storage_dir: ~/Desktop/TheDailyBrief   # where generated .md & .html reports are saved
 brief_language: en
 
 llm:
   provider: gemini                 # gemini | openai
-  model: gemini-3-flash-preview
+  model: gemini-flash-lite-latest
+
+spaces:
+  default:
+    gmail_token_env: GMAIL_REFRESH_TOKEN
+    gmail_scan_hours: 12
+    gmail_audit_days: 5
+    obsidian_enabled: true
+  work:
+    gmail_token_env: GMAIL_REFRESH_TOKEN_WORK
+    gmail_scan_hours: 12
+    gmail_audit_days: 5
+    obsidian_enabled: false
+  study:
+    gmail_token_env: GMAIL_REFRESH_TOKEN_STUDY
+    gmail_scan_hours: 12
+    gmail_audit_days: 5
+    obsidian_enabled: false
 
 connectors:
   gmail:
     enabled: true
     max_emails: 20
-    scan_hours: 12                 # look back 12h
 
   obsidian:
     enabled: true
