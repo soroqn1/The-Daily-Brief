@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141518" />
+      <stop offset="100%" stop-color="#0a0a0c" />
+    </linearGradient>
+    <linearGradient id="paperGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fdfbf7" />
+      <stop offset="100%" stop-color="#f4eedf" />
+    </linearGradient>
+    <linearGradient id="goldAccent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c99738" />
+      <stop offset="100%" stop-color="#eac775" />
+    </linearGradient>
+    <filter id="dropShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.6" />
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="1200" height="420" fill="url(#bgGrad)" />
+
+  <!-- Subtle Editorial Grid Borders -->
+  <rect x="24" y="24" width="1152" height="372" fill="none" stroke="#26272b" stroke-width="1.5" />
+  <line x1="24" y1="68" x2="1176" y2="68" stroke="#26272b" stroke-width="1" />
+  <line x1="24" y1="352" x2="1176" y2="352" stroke="#26272b" stroke-width="1" />
+
+  <!-- Folio Header -->
+  <text x="44" y="52" fill="#8e8b82" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="11" font-weight="700" letter-spacing="2.5">VOL. I · NO. 24 · PRIVATE MACBOOK INTELLIGENCE BROADSHEET</text>
+  <text x="1156" y="52" text-anchor="end" fill="#c99738" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="11" font-weight="700" letter-spacing="2">LOCAL-FIRST · 100% PRIVATE</text>
+
+  <!-- Left Column: Masthead & Vision -->
+  <g transform="translate(60, 110)">
+    <!-- Crest Icon -->
+    <rect x="0" y="0" width="46" height="46" fill="#1b1c20" stroke="#36373d" stroke-width="1.5" />
+    <path d="M11 12h24M11 23h24M11 34h14M23 12v22" stroke="#eac775" stroke-width="2" stroke-linecap="square" />
+    <circle cx="31" cy="34" r="2" fill="#eac775" />
+
+    <!-- Newspaper Title -->
+    <text x="64" y="26" fill="#c99738" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="10" font-weight="800" letter-spacing="3">MORNING INTELLIGENCE DISPATCH</text>
+    <text x="64" y="60" fill="#ffffff" font-family="Georgia, serif" font-size="44" font-weight="900" letter-spacing="-1">The Daily Brief</text>
+
+    <text x="0" y="112" fill="#b0aba0" font-family="Georgia, serif" font-style="italic" font-size="16">
+      "All the signal fit to compute — synthesized on MacBook wake."
+    </text>
+
+    <!-- Subtitle / Value Prop -->
+    <text x="0" y="148" fill="#88847c" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="400">
+      A local Python orchestrator that polls your Gmail, Obsidian &amp; sources,
+    </text>
+    <text x="0" y="168" fill="#88847c" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="400">
+      synthesizes priorities via LLM, and prints a bespoke newspaper front page.
+    </text>
+
+    <!-- Tags Row -->
+    <g transform="translate(0, 195)">
+      <rect x="0" y="0" width="94" height="24" fill="#1e2025" stroke="#32343a" />
+      <text x="47" y="15" text-anchor="middle" fill="#d4cfc5" font-family="monospace" font-size="10" font-weight="600">PYTHON 3.12</text>
+
+      <rect x="104" y="0" width="80" height="24" fill="#1e2025" stroke="#32343a" />
+      <text x="144" y="15" text-anchor="middle" fill="#d4cfc5" font-family="monospace" font-size="10" font-weight="600">FASTAPI</text>
+
+      <rect x="194" y="0" width="70" height="24" fill="#1e2025" stroke="#32343a" />
+      <text x="229" y="15" text-anchor="middle" fill="#d4cfc5" font-family="monospace" font-size="10" font-weight="600">JINJA2</text>
+
+      <rect x="274" y="0" width="104" height="24" fill="#1e2025" stroke="#32343a" />
+      <text x="326" y="15" text-anchor="middle" fill="#d4cfc5" font-family="monospace" font-size="10" font-weight="600">LOCAL-FIRST</text>
+
+      <rect x="388" y="0" width="112" height="24" fill="#1e2025" stroke="#32343a" />
+      <text x="444" y="15" text-anchor="middle" fill="#eac775" font-family="monospace" font-size="10" font-weight="600">ZERO CLOUD</text>
+    </g>
+  </g>
+
+  <!-- Right Column: Newspaper Broadhseet Card Mockup -->
+  <g transform="translate(680, 85)" filter="url(#dropShadow)">
+    <!-- Paper Sheet -->
+    <rect width="450" height="245" rx="3" fill="url(#paperGrad)" stroke="#dcd4c3" stroke-width="1.5" />
+
+    <!-- Sheet Masthead -->
+    <rect x="16" y="14" width="418" height="24" fill="#ebe4d2" />
+    <text x="26" y="29" fill="#1c1917" font-family="Georgia, serif" font-size="12" font-weight="900" letter-spacing="1">THE MORNING DISPATCH</text>
+    <text x="424" y="29" text-anchor="end" fill="#57534e" font-family="-apple-system, sans-serif" font-size="9" font-weight="700">EDITION #241 · 08:30 AM</text>
+
+    <line x1="16" y1="44" x2="434" y2="44" stroke="#1c1917" stroke-width="1.5" />
+    <line x1="16" y1="47" x2="434" y2="47" stroke="#1c1917" stroke-width="0.5" />
+
+    <!-- Lead Story -->
+    <text x="18" y="66" fill="#b91c1c" font-family="-apple-system, sans-serif" font-size="8" font-weight="800" letter-spacing="1">⚡ ACTION REQUIRED · GMAIL</text>
+    <text x="18" y="84" fill="#1c1917" font-family="Georgia, serif" font-size="15" font-weight="700">Q3 Partnership Review &amp; Contract Sign-off</text>
+    <text x="18" y="100" fill="#44403c" font-family="-apple-system, sans-serif" font-size="10">Legal forwarded revised agreement. Requires sign-off before 12:00 PM.</text>
+
+    <line x1="16" y1="112" x2="434" y2="112" stroke="#d6cebc" stroke-width="1" />
+
+    <!-- Split Columns -->
+    <!-- Col 1: Overnight Missed -->
+    <text x="18" y="130" fill="#1e3a8a" font-family="-apple-system, sans-serif" font-size="8" font-weight="800" letter-spacing="1">📬 OVERNIGHT DISPATCH</text>
+    <text x="18" y="146" fill="#1c1917" font-family="Georgia, serif" font-size="12" font-weight="700">3 Unread Client Inquiries</text>
+    <text x="18" y="160" fill="#57534e" font-family="-apple-system, sans-serif" font-size="9">Stripe payout cleared ($4,250).</text>
+    <text x="18" y="174" fill="#57534e" font-family="-apple-system, sans-serif" font-size="9">Bug report on auth token expiry.</text>
+
+    <!-- Divider -->
+    <line x1="225" y1="118" x2="225" y2="200" stroke="#d6cebc" stroke-width="1" />
+
+    <!-- Col 2: Obsidian TODOs -->
+    <text x="240" y="130" fill="#15803d" font-family="-apple-system, sans-serif" font-size="8" font-weight="800" letter-spacing="1">📝 OBSIDIAN VAULT</text>
+    <text x="240" y="146" fill="#1c1917" font-family="Georgia, serif" font-size="12" font-weight="700">Today's Focus: v0.2 Release</text>
+    <text x="240" y="160" fill="#57534e" font-family="-apple-system, sans-serif" font-size="9">[ ] Review architecture draft</text>
+    <text x="240" y="174" fill="#57534e" font-family="-apple-system, sans-serif" font-size="9">[ ] Close PR #14 and deploy</text>
+
+    <!-- Rubber Stamp Seal -->
+    <g transform="translate(345, 175) rotate(-6)">
+      <rect width="80" height="24" fill="none" stroke="#15803d" stroke-width="1.8" />
+      <text x="40" y="16" text-anchor="middle" fill="#15803d" font-family="-apple-system, sans-serif" font-size="9" font-weight="900" letter-spacing="1.5">DISPATCHED</text>
+    </g>
+
+    <!-- Footer of Paper -->
+    <rect x="0" y="215" width="450" height="30" fill="#eae3d1" />
+    <circle cx="24" cy="230" r="4" fill="#16a34a" />
+    <text x="34" y="233" fill="#44403c" font-family="-apple-system, sans-serif" font-size="9" font-weight="700">LOCAL HUB ACTIVE · HTTP://LOCALHOST:8000</text>
+    <text x="432" y="233" text-anchor="end" fill="#78716c" font-family="monospace" font-size="9">GEN: 1.4s · 0 TELEMETRY</text>
+  </g>
+
+  <!-- Bottom Footer Status -->
+  <circle cx="48" cy="377" r="3.5" fill="#22c55e" />
+  <text x="60" y="380" fill="#a8a29e" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="10" font-weight="600" letter-spacing="1">WAKE TRIGGER READY · RUNS AUTOMATICALLY ON MACBOOK OPEN</text>
+  <text x="1156" y="380" text-anchor="end" fill="#78716c" font-family="monospace" font-size="10">GITHUB.COM/SOROQN1/THE-DAILY-BRIEF</text>
+</svg>
