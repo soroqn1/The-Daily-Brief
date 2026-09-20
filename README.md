@@ -5,7 +5,7 @@
   <br/><br/>
 
   <p align="center">
-    <strong>A bespoke newspaper-style morning brief on MacBook wake. Local-first, editorial, and 100% private.</strong>
+    <strong>A bespoke newspaper-style morning brief on wake or demand. Local-first, editorial, and 100% private.</strong>
   </p>
 
   <p align="center">
@@ -14,6 +14,7 @@
     <a href="https://github.com/astral-sh/uv"><img src="https://img.shields.io/badge/package%20manager-uv-de5fe9?style=flat-square" alt="uv" /></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License: MIT" /></a>
     <img src="https://img.shields.io/badge/tests-59%2F59%20passing-brightgreen?style=flat-square" alt="Tests" />
+    <img src="https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey?style=flat-square" alt="Cross-Platform" />
     <img src="https://img.shields.io/badge/privacy-100%25%20local-success?style=flat-square" alt="Privacy" />
   </p>
 
@@ -35,10 +36,10 @@ Every morning begins the same way: you open your laptop, and within 60 seconds y
 
 **The Daily Brief** replaces the morning tab avalanche with a **single, private, beautifully printed newspaper front page**:
 
-* ⚡ **Wakes with your laptop**: Fires automatically when your MacBook wakes from sleep.
-* ☕ **Synthesized for morning focus**: Reads your unread emails, urgent calendar items, and open Obsidian tasks.
+* ⚡ **Wakes with your morning**: Generates automatically upon waking your laptop or on-demand via background server / CLI.
+* ☕ **Synthesized for focus**: Reads your unread emails, urgent calendar items, and open Obsidian tasks.
 * 📰 **Broadsheet typography**: Designed with classic editorial serif typography (Playfair Display & Newsreader) and tactile paper textures.
-* 🔒 **100% Local & Private**: No third-party SaaS, no data tracking. Your emails, tokens, and notes stay on your machine.
+* 🔒 **100% Local & Private**: Runs locally on macOS, Linux, or Windows. No third-party SaaS, zero telemetry. Your data stays on your machine.
 * 🤖 **AI-curated**: An LLM acts as your private managing editor, extracting key action items and summarizing overnight dispatches.
 
 ---
@@ -46,7 +47,7 @@ Every morning begins the same way: you open your laptop, and within 60 seconds y
 ## 🗞️ Features
 
 * **Bespoke Broadsheet Layout** — Crafted like an authentic print newspaper with lead stories, two-column dispatch sections, day/night broadsheet toggle, and ink rubber-stamp seals.
-* **MacBook Wake Trigger** — Triggers seamlessly upon opening your MacBook lid, so your daily edition is already waiting when you sit down with your coffee.
+* **Wake & Scheduled Triggers** — Runs seamlessly on wake, scheduled cron, or on demand via local server, so your daily edition is already waiting when you sit down with your coffee.
 * **Multi-Space Desks** — Isolate distinct areas of your life (e.g. `Personal`, `Work`, `Research`, `Crypto`) with independent connectors and folders.
 * **Gmail Connector with Deep Audit** — Secure OAuth2 loopback authentication. Distinguishes between urgent starred messages and background newsletters.
 * **Obsidian Vault Sync** — Scans your daily notes and project files for open tasks (`- [ ]`), stalled deadlines, and project milestones.
@@ -103,7 +104,7 @@ Visit **[http://localhost:8000](http://localhost:8000)** in your browser:
 
 ```
                                  ┌────────────────────────┐
-                                 │   MacBook Wake Event   │
+                                 │ Wake / Schedule / Hub  │
                                  └───────────┬────────────┘
                                              │
                                              ▼
