@@ -1,4 +1,4 @@
-# 🎨 Design Redesign & Layout Revamp
+# Design Redesign & Layout Revamp
 
 This branch tracks all layout, typography, CSS, and aesthetic improvements for **The Daily Brief**.
 
