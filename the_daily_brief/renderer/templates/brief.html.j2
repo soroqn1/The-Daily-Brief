@@ -323,7 +323,7 @@
   <div class="container">
     {% if file_path %}
     <div class="file-bar">
-      <span class="file-path" title="{{ file_path }}">📄 {{ file_path }}</span>
+      <span class="file-path" title="{{ file_path }}">{{ file_path }}</span>
       <div class="file-actions">
         <button class="btn btn-primary" onclick="copyPath('{{ file_path }}')">Copy Path for AI</button>
         <a href="?force=true" class="btn">Regenerate</a>
